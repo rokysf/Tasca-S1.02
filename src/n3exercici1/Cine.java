@@ -13,33 +13,32 @@ public class Cine {
 	public Cine() {
 		this.gestioButaques = new GestioButaques();
 		demanarDadesInicials();
-
 	}
 
 	public void iniciar() {
-
-		menu();
-		switch (menu()) {
-		case 1:
-			mostrarButaques(gestioButaques.getButaques());
-			break;
-		case 2:
-			mostrarButaquesPersona(gestioButaques.getButaques());
-			break;
-		case 3:
-			reservarButaca();
-			break;
-		case 4:
-
-			break;
-		case 5:
-
-			break;
-		default:
-			System.out.println("Fins aviat");
-
-		}
-
+		byte opcio;
+		do {
+			opcio = menu();
+			switch (opcio) {
+			case 1:
+				mostrarButaques(gestioButaques.getButaques());
+				break;
+			case 2:
+				mostrarButaquesPersona(gestioButaques.getButaques());
+				break;
+			case 3:
+				reservarButaca();
+				break;
+			case 4:
+				anularReserva();
+				break;
+			case 5:
+				anularReservaPersona(gestioButaques.getButaques());
+				break;
+			default:
+				System.out.println("Fins aviat");
+			}
+		} while (opcio != 0);
 	}
 
 	public byte menu() {
@@ -48,34 +47,45 @@ public class Cine {
 			System.out.println("1.- Mostrar totes les butaques reservades.");
 			System.out.println("2.- Mostrar les butaques reservades per una persona.");
 			System.out.println("3.- Reservar una butaca.");
-			System.out.println("4.- Anul·lar la reserva d’una butaca.");
-			System.out.println("5.- Anul·lar totes les reserves d’una persona.");
+			System.out.println("4.- Anular la reserva d'una butaca.");
+			System.out.println("5.- Anular totes les reserves d'una persona.");
 			System.out.println("0.- Sortir.");
 			opcio = sc.nextByte();
+			sc.nextLine();
 			if (opcio < 0 || opcio > 5) {
-				System.out.println("L'opció escollida no es correcte");
+				System.out.println("L'opciÃ³ escollida no es correcte");
 			}
 		} while (opcio < 0 || opcio > 5);
 		return opcio;
 	}
 
 	public void mostrarButaques(ArrayList<Butaca> butaques) {
-		for (Butaca butaca : butaques) {
-			System.out.println(butaca);
+		if (butaques.size() == 0) {
+			System.out.println("No hi han butaques introduides");
+		} else {
+			for (Butaca butaca : butaques) {
+				System.out.println(butaca);
+			}
 		}
 	}
 
 	public void mostrarButaquesPersona(ArrayList<Butaca> butaques) {
 		int contador = 0;
-		System.out.println("Introdueix el nom de la persona que ha fet la reserva");
-		String nombre = sc.nextLine();
+		String nom = "";
+		do {
+			try {
+				nom = introduirPersona();
+			} catch (ExcepcioNomPersonaIncorrecte e) {
+				System.out.println(e.getMessage());
+			}
+		} while (nom == "");
 		for (Butaca butaca : butaques) {
-			if (nombre.equalsIgnoreCase(butaca.getPersonaReservaButaca()))
-				;
-			System.out.println(butaca);
-			contador++;
+			if (nom.equalsIgnoreCase(butaca.getPersonaReservaButaca())) {
+				System.out.println(butaca);
+				contador++;
+			}
 		}
-		System.out.println(nombre + " te " + contador + " butaques reservades");
+		System.out.println(nom + " te " + contador + " butaques reservades");
 	}
 
 	public void reservarButaca() {
@@ -83,23 +93,32 @@ public class Cine {
 		int seient = 0;
 		String nom = "";
 
-		try {
-			fila = introduirFila();
-		} catch (ExcepcioFilaIncorrecta e) {
-			System.out.println(e.getMessage());
-		}
-		try {
-			seient = introduirSeient();
-		} catch (ExcepcioSeientIncorrecte e) {
-			System.out.println(e.getMessage());
-		}
-		try {
-			nom = introduirPersona();
-		} catch (ExcepcioNomPersonaIncorrecte e) {
-			System.out.println(e.getMessage());
-		}
+		do {
+			try {
+				fila = introduirFila();
+			} catch (ExcepcioFilaIncorrecta e) {
+				System.out.println(e.getMessage());
+			}
+		} while (fila == 0);
+
+		do {
+			try {
+				seient = introduirSeient();
+			} catch (ExcepcioSeientIncorrecte e) {
+				System.out.println(e.getMessage());
+			}
+		} while (seient == 0);
+
+		do {
+			try {
+				nom = introduirPersona();
+			} catch (ExcepcioNomPersonaIncorrecte e) {
+				System.out.println(e.getMessage());
+			}
+		} while (nom == "");
 
 		Butaca butaca = new Butaca(fila, seient, nom);
+
 		try {
 			gestioButaques.afegirButaca(butaca);
 		} catch (ExcepcioButacaOcupada e) {
@@ -108,15 +127,64 @@ public class Cine {
 	}
 
 	public void anularReserva() {
+		int fila = 0;
+		int seient = 0;
 
+		do {
+			try {
+				fila = introduirFila();
+			} catch (ExcepcioFilaIncorrecta e) {
+				System.out.println(e.getMessage());
+			}
+		} while (fila == 0);
+
+		do {
+			try {
+				seient = introduirSeient();
+			} catch (ExcepcioSeientIncorrecte e) {
+				System.out.println(e.getMessage());
+			}
+		} while (seient == 0);
+
+		try {
+			gestioButaques.eliminarButaca(fila, seient);
+		} catch (ExcepcioButacaLliure e) {
+			System.out.println(e.getMessage());
+		}
 	}
 
-	public void anularReservaPersona() {
+	public void anularReservaPersona(ArrayList<Butaca> butaques) {
+		String nom = "";
+		boolean coincideix = false;
+		if (butaques.size() == 0) {
+			System.out.println("No hi han butaques introduides");
+		} else {
+			do {
+				try {
+					nom = introduirPersona();
+				} catch (ExcepcioNomPersonaIncorrecte e) {
+					System.out.println(e.getMessage());
+				}
+			} while (nom == "");
 
+			Iterator<Butaca> iter = butaques.iterator();
+
+			while (iter.hasNext()) {
+				Butaca butaca = iter.next();
+				if (nom.equalsIgnoreCase(butaca.getPersonaReservaButaca())) {
+					System.out.println(butaca + " RESERVA ELIMINADA");
+					iter.remove();
+					coincideix = true;
+				}
+			}
+			if (!coincideix) {
+				System.out.println(nom + " no te cap reserva");
+			}
+		}
 	}
 
 	public String introduirPersona() throws ExcepcioNomPersonaIncorrecte {
-		System.out.println("Introdueix el nom de la persona que vol fer la reserva ");
+		System.out.println("Introdueix el nom de la persona");
 		String nom = sc.nextLine();
 		if (nom.matches(".*[0-9].*")) {
 			throw new ExcepcioNomPersonaIncorrecte("El nom de persona introduit es incorrecte");
@@ -130,21 +198,25 @@ public class Cine {
 		this.nombreFiles = sc.nextInt();
 		System.out.println("Quants seients per fila te la sala de cinema?");
 		this.nombreSeientsFila = sc.nextInt();
+		sc.nextLine();
 	}
 
 	public int introduirFila() throws ExcepcioFilaIncorrecta {
 		System.out.println("Introdueix el nombre de fila");
 		int fila = sc.nextInt();
+		sc.nextLine();
 		if (fila >= 1 && fila <= this.nombreFiles) {
 			return fila;
 		} else {
 			throw new ExcepcioFilaIncorrecta("El nombre de fila introduit es incorrecte");
 		}
+
 	}
 
 	public int introduirSeient() throws ExcepcioSeientIncorrecte {
 		System.out.println("Introdueix el nombre de seient");
 		int seient = sc.nextInt();
+		sc.nextLine();
 		if (seient >= 1 && seient <= this.nombreSeientsFila) {
 			return seient;
 		} else {

@@ -22,7 +22,7 @@ public class GestioButaques {
 			this.butaques.add(butaca);
 			System.out.println("La butaca s'afegit correctament");
 		} else {
-			throw new ExcepcioButacaOcupada("La butaca que es vol afegir, ja est‡ ocupada");
+			throw new ExcepcioButacaOcupada("La butaca que es vol afegir, ja est√† ocupada");
 		}
 
 	}
@@ -33,7 +33,7 @@ public class GestioButaques {
 			butaques.remove(resultado);
 			System.out.println("La butaca s'ha eliminat correctament");
 		} else {
-			throw new ExcepcioButacaLliure("La butaca que es vol eliminar, est‡ lliure");
+			throw new ExcepcioButacaLliure("La butaca que es vol eliminar, est√† lliure");
 		}
 	}
 

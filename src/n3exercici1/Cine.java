@@ -146,8 +146,10 @@ public class Cine {
 			}
 		} while (seient == 0);
 
+		Butaca butaca = new Butaca(fila, seient);
+		
 		try {
-			gestioButaques.eliminarButaca(fila, seient);
+			gestioButaques.eliminarButaca(butaca);
 		} catch (ExcepcioButacaLliure e) {
 			System.out.println(e.getMessage());
 		}

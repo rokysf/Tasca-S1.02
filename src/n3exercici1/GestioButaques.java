@@ -17,7 +17,7 @@ public class GestioButaques {
 	}
 
 	public void afegirButaca(Butaca butaca) throws ExcepcioButacaOcupada {
-		int resultado = cercarButaca(butaca);
+		int resultado = cercarButaca(butaca.getNombreFila(), butaca.getNombreSeient());
 		if (resultado == -1) {
 			this.butaques.add(butaca);
 			System.out.println("La butaca s'afegit correctament");
@@ -27,8 +27,8 @@ public class GestioButaques {
 
 	}
 
-	public void eliminarButaca(Butaca butaca) throws ExcepcioButacaLliure {
-		int resultado = cercarButaca(butaca);
+	public void eliminarButaca(int nombreFila, int nombreSeient) throws ExcepcioButacaLliure {
+		int resultado = cercarButaca(nombreFila, nombreSeient);
 		if (resultado != -1) {
 			butaques.remove(resultado);
 			System.out.println("La butaca s'ha eliminat correctament");
@@ -37,15 +37,17 @@ public class GestioButaques {
 		}
 	}
 
-	public int cercarButaca(Butaca butaca) {
+	public int cercarButaca(int nombreFila, int nombreSeient) {
 		int i = 0;
-		
-		while (i < butaques.size() && !butaques.get(i).equals(butaca)) {
-			if (!butaques.get(i).equals(butaca)) {
+		boolean encontrado = false;
+		while (i < butaques.size() && !encontrado) {
+			if (butaques.get(i).getNombreFila() == nombreFila && butaques.get(i).getNombreSeient() == nombreSeient) {
+				encontrado = true;
+			} else {
 				i++;
 			}
 		}
-		if (i == butaques.size()) {
+		if (!encontrado) {
 			i = -1;
 		}
 		return i;

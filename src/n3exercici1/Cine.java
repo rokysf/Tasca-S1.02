@@ -85,7 +85,7 @@ public class Cine {
 				contador++;
 			}
 		}
-		System.out.println(nom + " te " + contador + (contador !=1 ? " butaques reservades" : " butaca reservada"));
+		System.out.println(nom + " te " + contador + " butaques reservades");
 	}
 
 	public void reservarButaca() {
@@ -146,10 +146,8 @@ public class Cine {
 			}
 		} while (seient == 0);
 
-		Butaca butaca = new Butaca(fila, seient);
-		
 		try {
-			gestioButaques.eliminarButaca(butaca);
+			gestioButaques.eliminarButaca(fila, seient);
 		} catch (ExcepcioButacaLliure e) {
 			System.out.println(e.getMessage());
 		}
